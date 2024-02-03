@@ -4,10 +4,10 @@ foreach($key in $entities.data.keys) {
     $policies_from_groups = @()
 
     $e = vault read /identity/entity/name/$key -format=json | convertfrom-json
-    $output = $key + ", " + $e.id
+    $output = $key + "`t" + $e.id
     $output = $output + "direct_policies[" + ($e.data.policies -join ',') + "]"
 
-    $output = $output + ",group_ids["
+    $output = $output + "`tgroup_ids["
     $groups = @()
     foreach($mg in $e.data.group_ids){
         $group = vault read /identity/group/id/$mg -format=json | convertfrom-json
@@ -17,7 +17,7 @@ foreach($key in $entities.data.keys) {
         }
     }
     $output = $output + ($groups -join ',') + "]"
-    $output = $output + ",direct_group_ids["
+    $output = $output + "`tdirect_group_ids["
     $groups = @()
     foreach($mg in $e.data.direct_group_ids){
         $group = vault read /identity/group/id/$mg -format=json | convertfrom-json
@@ -27,7 +27,7 @@ foreach($key in $entities.data.keys) {
         }
     }
     $output = $output + ($groups -join ',') + "]"
-    $output = $output + ",inherited_group_ids["
+    $output = $output + "`tinherited_group_ids["
     $groups = @()
     foreach($mg in $e.data.inherited_group_ids){
         $group = vault read /identity/group/id/$mg -format=json | convertfrom-json
@@ -37,6 +37,6 @@ foreach($key in $entities.data.keys) {
         }
     }
     $output = $output + ($groups -join ',') + "]"
-    $output = $output + ",policies_from_groups[" + ($policies_from_groups -join ',') + "]"
-    write-host $output
+    $output = $output + "`tpolicies_from_groups[" + ($policies_from_groups -join ',') + "]"
+    write-output $output
 }

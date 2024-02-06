@@ -1,11 +1,10 @@
+write-output "name`tid`taliases`tdirect assigned policies`tgroups`tdirect groups`tinherited groups`tpolicies from all groups"
 $entities = vault read /identity/entity/name list=true -format=json | convertfrom-json
 foreach($key in $entities.data.keys) { 
     #write-host $key
     $policies_from_groups = @()
-    $output = "name`tid`taliases`tdirect assigned policies`tassigned groups`tinherited groups`tpolicies from all groups"
     $e = vault read /identity/entity/name/$key -format=json | convertfrom-json
-    $output = $key + "`t" + $e.id
-    $output = $key + "`t"
+    $output = $key + "`t" + $e.data.id
 
     $output = $output + "`taliases["
     $aliases = @()

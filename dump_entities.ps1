@@ -2,11 +2,19 @@ $entities = vault read /identity/entity/name list=true -format=json | convertfro
 foreach($key in $entities.data.keys) { 
     #write-host $key
     $policies_from_groups = @()
-
+    $output = "name`tid`taliases`tdirect assigned policies`tassigned groups`tinherited groups`tpolicies from all groups"
     $e = vault read /identity/entity/name/$key -format=json | convertfrom-json
     $output = $key + "`t" + $e.id
-    $output = $output + "direct_policies[" + ($e.data.policies -join ',') + "]"
+    $output = $key + "`t"
 
+    $output = $output + "`taliases["
+    $aliases = @()
+    foreach($alias in $e.data.aliases){
+        $a = $alias.mount_path + $alias.name
+        $aliases += $a
+    }
+    $output = $output + ($aliases -join ',') + "]"
+    $output = $output + "`tdirect_policies[" + ($e.data.policies -join ',') + "]"
     $output = $output + "`tgroup_ids["
     $groups = @()
     foreach($mg in $e.data.group_ids){
